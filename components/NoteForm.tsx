@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import type { ActionState } from "@/app/actions";
+import { AlertCircleIcon, CheckIcon, ArrowLeftIcon } from "@/components/Icons";
 
 interface NoteFormProps {
   action: (prevState: ActionState | null, formData: FormData) => Promise<ActionState>;
@@ -21,6 +22,10 @@ export function NoteForm({
   cancelHref,
 }: NoteFormProps) {
   const [state, formAction, isPending] = useActionState(action, null);
+  const [title, setTitle] = useState(initialData?.title ?? "");
+  const [content, setContent] = useState(initialData?.content ?? "");
+
+  const wordCount = content.trim() ? content.trim().split(/\s+/).filter(Boolean).length : 0;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -28,67 +33,86 @@ export function NoteForm({
         <div
           role="alert"
           id="form-error-alert"
-          className="p-4 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm flex items-start gap-2"
+          className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3 shadow-2xs"
         >
-          <span className="text-base leading-none">⚠️</span>
-          <span>{state.error}</span>
+          <AlertCircleIcon className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-semibold block">Gagal Menyimpan Catatan</span>
+            <span className="text-xs text-red-600 leading-relaxed">{state.error}</span>
+          </div>
         </div>
       )}
 
-      <div>
-        <label
-          htmlFor="title"
-          className="block text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2"
-        >
-          Judul Catatan <span className="text-red-500">*</span>
-        </label>
+      {/* Field Judul */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor="title"
+            className="block text-sm font-semibold text-slate-800"
+          >
+            Judul Catatan <span className="text-red-500">*</span>
+          </label>
+          <span className="text-xs text-slate-400 font-mono">
+            {title.length} karakter
+          </span>
+        </div>
         <input
           id="title"
           name="title"
           type="text"
           required
           autoFocus
-          defaultValue={initialData?.title ?? ""}
-          placeholder="Contoh: Rencana Belajar Next.js & Cloudflare"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Masukkan judul catatan yang jelas..."
           disabled={isPending}
-          className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition disabled:opacity-60"
+          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition text-sm sm:text-base disabled:opacity-60 shadow-2xs"
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="content"
-          className="block text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2"
-        >
-          Isi Catatan{" "}
-          <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
-            (Boleh kosong)
+      {/* Field Isi Catatan */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <label
+            htmlFor="content"
+            className="block text-sm font-semibold text-slate-800"
+          >
+            Isi Catatan{" "}
+            <span className="text-xs font-normal text-slate-400">
+              (Opsional)
+            </span>
+          </label>
+          <span className="text-xs text-slate-400 font-mono">
+            {wordCount} kata &bull; {content.length} karakter
           </span>
-        </label>
+        </div>
         <textarea
           id="content"
           name="content"
-          rows={8}
-          defaultValue={initialData?.content ?? ""}
-          placeholder="Tuliskan catatanmu di sini..."
+          rows={9}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Tuliskan isi catatan, ide, atau to-do list di sini..."
           disabled={isPending}
-          className="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition disabled:opacity-60 text-sm leading-relaxed"
+          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition disabled:opacity-60 text-sm leading-relaxed shadow-2xs font-sans"
         />
       </div>
 
-      <div className="flex items-center justify-end gap-3 pt-2">
+      {/* Action Buttons */}
+      <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
         <Link
           href={cancelHref}
           id="btn-cancel"
-          className="px-4 py-2 rounded-lg text-sm font-medium border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 transition shadow-2xs"
         >
-          Batal
+          <ArrowLeftIcon className="w-4 h-4 text-slate-400" />
+          <span>Batal</span>
         </Link>
         <button
           type="submit"
           id="btn-submit"
           disabled={isPending}
-          className="px-5 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition shadow-xs hover:shadow disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {isPending ? (
             <>
@@ -114,7 +138,10 @@ export function NoteForm({
               <span>Menyimpan...</span>
             </>
           ) : (
-            <span>{submitLabel}</span>
+            <>
+              <CheckIcon className="w-4 h-4" />
+              <span>{submitLabel}</span>
+            </>
           )}
         </button>
       </div>

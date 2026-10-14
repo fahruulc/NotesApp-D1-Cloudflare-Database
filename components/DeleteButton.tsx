@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { deleteNote } from "@/app/actions";
+import { TrashIcon, AlertTriangleIcon, XIcon } from "@/components/Icons";
 
 interface DeleteButtonProps {
   noteId: number;
@@ -28,9 +29,10 @@ export function DeleteButton({ noteId }: DeleteButtonProps) {
         type="button"
         id="btn-delete-trigger"
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/50 transition focus:outline-none focus:ring-2 focus:ring-red-500"
+        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100/80 border border-red-200/80 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500/20 shadow-2xs"
+        title="Hapus catatan"
       >
-        <span>🗑️</span>
+        <TrashIcon className="w-4 h-4 text-red-500" />
         <span>Hapus</span>
       </button>
 
@@ -39,47 +41,64 @@ export function DeleteButton({ noteId }: DeleteButtonProps) {
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-dialog-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-150"
         >
           <div
-            className="w-full max-w-md bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 shadow-xl space-y-4"
+            className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-5 animate-in zoom-in-95 duration-150"
             onKeyDown={(e) => {
               if (e.key === "Escape" && !isPending) setIsOpen(false);
             }}
           >
-            <div className="flex items-center gap-3">
-              <span className="p-2.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 text-xl">
-                ⚠️
-              </span>
-              <div>
-                <h3
-                  id="delete-dialog-title"
-                  className="text-lg font-bold text-neutral-900 dark:text-neutral-100"
-                >
-                  Hapus Catatan?
-                </h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-0.5">
-                  Tindakan ini permanen dan tidak dapat dibatalkan.
-                </p>
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600 shrink-0">
+                  <AlertTriangleIcon className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3
+                    id="delete-dialog-title"
+                    className="text-lg font-bold text-slate-900 leading-snug"
+                  >
+                    Hapus Catatan Ini?
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Tindakan ini permanen dan tidak dapat dibatalkan.
+                  </p>
+                </div>
               </div>
+
+              {!isPending && (
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition"
+                  title="Tutup dialog"
+                >
+                  <XIcon className="w-4 h-4" />
+                </button>
+              )}
             </div>
+
+            <p className="text-sm text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+              Catatan akan dihapus secara permanen dari database Cloudflare D1. Kamu tidak akan bisa memulihkan isinya kembali.
+            </p>
 
             {error && (
               <div
                 role="alert"
-                className="p-3 text-xs rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-300"
+                className="p-3 text-xs rounded-xl bg-red-50 border border-red-200 text-red-700 font-medium"
               >
                 {error}
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex items-center justify-end gap-2.5 pt-2">
               <button
                 type="button"
                 id="btn-cancel-delete"
                 disabled={isPending}
                 onClick={() => setIsOpen(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition disabled:opacity-50"
+                className="px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-700 hover:bg-slate-50 transition disabled:opacity-50 shadow-2xs"
               >
                 Batal
               </button>
@@ -88,7 +107,7 @@ export function DeleteButton({ noteId }: DeleteButtonProps) {
                 id="btn-confirm-delete"
                 disabled={isPending}
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 active:scale-95 transition shadow-sm disabled:opacity-50 flex items-center gap-2"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700 active:scale-95 transition shadow-xs hover:shadow disabled:opacity-50"
               >
                 {isPending ? (
                   <>
@@ -114,7 +133,10 @@ export function DeleteButton({ noteId }: DeleteButtonProps) {
                     <span>Menghapus...</span>
                   </>
                 ) : (
-                  <span>Ya, Hapus</span>
+                  <>
+                    <TrashIcon className="w-4 h-4" />
+                    <span>Ya, Hapus</span>
+                  </>
                 )}
               </button>
             </div>

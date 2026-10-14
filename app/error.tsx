@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { AlertTriangleIcon } from "@/components/Icons";
 
 export default function ErrorBoundary({
   error,
@@ -18,15 +19,18 @@ export default function ErrorBoundary({
     <div
       role="alert"
       id="error-state-card"
-      className="max-w-md mx-auto text-center py-16 px-4 bg-white dark:bg-neutral-900 border border-red-200 dark:border-red-900/40 rounded-2xl shadow-xs space-y-4"
+      className="max-w-md mx-auto text-center py-16 px-6 bg-white border border-red-200 rounded-3xl shadow-xs space-y-5 my-8"
     >
-      <div className="text-5xl">⚠️</div>
-      <div className="space-y-1">
-        <h1 className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
+      <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-600 mx-auto flex items-center justify-center border border-red-100">
+        <AlertTriangleIcon className="w-8 h-8 text-red-600" />
+      </div>
+
+      <div className="space-y-1.5">
+        <h1 className="text-xl font-bold text-slate-900">
           Terjadi Kesalahan
         </h1>
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          Tidak dapat memuat atau memproses data saat ini.
+        <p className="text-sm text-slate-500 max-w-sm mx-auto leading-relaxed">
+          Tidak dapat memuat atau memproses data saat ini. Silakan coba kembali.
         </p>
       </div>
 
@@ -34,13 +38,13 @@ export default function ErrorBoundary({
         <button
           type="button"
           onClick={() => reset()}
-          className="px-4 py-2 rounded-lg text-sm font-medium bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition shadow-sm"
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition shadow-xs hover:shadow"
         >
           Coba Lagi
         </button>
         <Link
           href="/"
-          className="px-4 py-2 rounded-lg text-sm font-medium border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+          className="px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-700 hover:bg-slate-50 transition shadow-2xs"
         >
           Ke Beranda
         </Link>

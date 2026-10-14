@@ -7,8 +7,6 @@ if (process.env.NODE_ENV === "development") {
 
 const nextConfig: NextConfig = {
   /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
   turbopack: {
     rules: {
       "*.css": {
