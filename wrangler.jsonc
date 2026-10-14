@@ -1,0 +1,24 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "notes-app-d1-cloudflare",
+	"main": ".open-next/worker.js",
+	"upload_source_maps": true,
+	"compatibility_date": "2026-10-13",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "notes-db",
+			"database_id": "a17aa737-fc44-402a-8c42-7e5f4ad52c59"
+		}
+	]
+}
